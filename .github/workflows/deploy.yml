@@ -113,7 +113,7 @@ jobs:
       - run: sudo mkdir -p $DEPLOY_DIR
 
       # Build the i386 Dockerfile image.
-      - run: DOCKER_BUILDKIT=0 docker build . --tag $TAG --file ${{ github.event.inputs.DOCKERFILE_PATH }} --platform=i386 --security-opt seccomp=unconfined
+      - run: docker buildx create --use --name insecure --driver docker-container --buildkitd-flags '--allow-insecure-entitlement security.insecure' && docker buildx build . --allow security.insecure --load --tag $TAG --file ${{ github.event.inputs.DOCKERFILE_PATH }} --platform=linux/386 && docker buildx rm insecure
       
       # Run the docker image so that we can export the container.
       # Run the Docker container with the Google Public DNS nameservers: 8.8.8.8, 8.8.4.4
